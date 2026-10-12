@@ -4,9 +4,8 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'Tiranga Boat Rally | Madhya Pradesh Tourism Board',
+  description: 'Tiranga Boat Rally proposal, event information, participant workflow and nodal coordination for Madhya Pradesh Tourism Board.',
 }
 
 export default function RootLayout({
@@ -15,8 +14,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <head><title>HGT-MPTB</title><link rel="icon" href="/images/mp-tourism-logo.png" /><style>{`
+    <html lang="hi">
+      <head><link rel="icon" href="/images/mp-tourism-logo.png" /><style>{`
 html {
   font-family: ${GeistSans.style.fontFamily};
   --font-sans: ${GeistSans.variable};

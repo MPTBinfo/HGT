@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { authenticate, User } from '@/lib/auth'
 import { Eye, EyeOff, Lock, UserIcon } from 'lucide-react'
 import Image from 'next/image'
 
@@ -25,17 +24,29 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
 
-    // Simulate loading
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id.trim(), password, role }),
+      })
+      const result = await response.json() as {
+        user?: { id: string; role: string; name: string }
+        error?: string
+      }
 
-    const user = authenticate(id, password)
-    if (user && user.role === role) {
+      if (!response.ok || !result.user) {
+        throw new Error(result.error || 'लॉगिन नहीं हो सका। कृपया पुनः प्रयास करें।')
+      }
+
+      // These values are for UI convenience only. Access is enforced by the
+      // signed HttpOnly server cookie, not by localStorage.
       localStorage.setItem('isAuthenticated', 'true')
-      localStorage.setItem('userRole', user.role)
-      localStorage.setItem('userName', user.name)
-      
-      // Redirect based on role
-      switch (user.role) {
+      localStorage.setItem('userRole', result.user.role)
+      localStorage.setItem('userName', result.user.name)
+      setPassword('')
+
+      switch (result.user.role) {
         case 'cms':
           router.push('/admin')
           break
@@ -51,24 +62,10 @@ export default function LoginPage() {
         default:
           router.push('/')
       }
-    } else {
-      setError('गलत ID, पासवर्ड या भूमिका!')
-    }
-    setLoading(false)
-  }
-
-  const getRoleCredentials = (selectedRole: string) => {
-    switch (selectedRole) {
-      case 'cms':
-        return { id: 'cms_hgt', password: 'cms_hgt' }
-      case 'mptb_nodal':
-        return { id: 'mptb_nodal', password: 'mptb_2025' }
-      case 'sports_nodal':
-        return { id: 'sports_nodal', password: 'sports_2025' }
-      case 'participant':
-        return { id: 'participant', password: 'participant_2025' }
-      default:
-        return { id: '', password: '' }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'लॉगिन नहीं हो सका। कृपया पुनः प्रयास करें।')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -154,19 +151,6 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
-
-            {role && (
-              <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-md text-sm">
-                <p className="font-semibold">
-                  {role === 'cms' && 'CMS Admin क्रेडेंशियल:'}
-                  {role === 'mptb_nodal' && 'MPTB Nodal Officer क्रेडेंशियल:'}
-                  {role === 'sports_nodal' && 'Sports Nodal Officer क्रेडेंशियल:'}
-                  {role === 'participant' && 'Participant क्रेडेंशियल:'}
-                </p>
-                <p>ID: {getRoleCredentials(role).id}</p>
-                <p>Password: {getRoleCredentials(role).password}</p>
-              </div>
-            )}
 
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">

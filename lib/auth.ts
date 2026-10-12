@@ -1,6 +1,5 @@
 export interface User {
   id: string;
-  password: string;
   role: 'cms' | 'mptb_nodal' | 'sports_nodal' | 'participant';
   name: string;
 }

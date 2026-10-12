@@ -91,38 +91,6 @@ export interface SportsTaskData {
   participantsAssigned?: number;
 }
 
-const USERS: User[] = [
-  {
-    id: 'cms_hgt',
-    password: 'cms_hgt',
-    role: 'cms',
-    name: 'CMS Admin'
-  },
-  {
-    id: 'mptb_nodal',
-    password: 'mptb_2025',
-    role: 'mptb_nodal',
-    name: 'MPTB Nodal Officer'
-  },
-  {
-    id: 'sports_nodal',
-    password: 'sports_2025',
-    role: 'sports_nodal',
-    name: 'Sports Nodal Officer'
-  },
-  {
-    id: 'participant',
-    password: 'participant_2025',
-    role: 'participant',
-    name: 'Participant'
-  }
-];
-
-export const authenticate = (id: string, password: string): User | null => {
-  const user = USERS.find(u => u.id === id && u.password === password);
-  return user || null;
-};
-
 export const getDefaultContent = (): ContentData => ({
   // Header Section
   tourismBoardTitle: "मध्यप्रदेश पर्यटन बोर्ड",
